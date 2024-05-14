@@ -10,86 +10,81 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Run tests
-        run: npm test
+    - name: Run tests
+      run: npm test
 
-      - name: Set up Git
-        if: success()
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
+    - name: Set up Git
+      if: success()
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
 
-      - name: Get current version
-        if: success()
-        id: get_version
-        run: |
-          if [ -f version.txt ]; then
-            version=$(cat version.txt)
-            echo "Current version: $version"
-          else
-            version=0.0.0
-            echo "0.0.0" > version.txt
-            echo "Current version: $version"
-          fi
-          echo "::set-output name=version::$version"
+    - name: Get current version
+      if: success()
+      id: get_version
+      run: |
+        if [ -f version.txt ]; then
+          version=$(cat version.txt)
+          echo "Current version: $version"
+        else
+          version=0.0.0
+          echo "0.0.0" > version.txt
+          echo "Current version: $version"
+        fi
+        echo "::set-output name=version::$version"
 
-      - name: Increment version
-        if: success()
-        id: increment_version
-        run: |
-          version=${{ steps.get_version.outputs.version }}
-          IFS='.' read -r major minor patch <<< "$version"
-          patch=$((patch + 1))
-          new_version="$major.$minor.$patch"
-          echo "New version: $new_version"
-          echo "::set-output name=new_version::$new_version"
-          echo $new_version > version.txt
+    - name: Increment version
+      if: success()
+      id: increment_version
+      run: |
+        version=${{ steps.get_version.outputs.version }}
+        IFS='.' read -r major minor patch <<< "$version"
+        patch=$((patch + 1))
+        new_version="$major.$minor.$patch"
+        echo "New version: $new_version"
+        echo "::set-output name=new_version::$new_version"
+        echo $new_version > version.txt
 
-      - name: Run tests
-        run: |
-          result=$(npm test)
-          echo "$result"
-          if [[ "$result" == *"FAIL"* ]]; then
-            echo "Tests failed: There are failing tests. Please check and fix them before continuing."
-            exit 1
-          else
-            echo "Tests passed successfully"
-          fi
+    - name: Run tests
+      run: |
+        result=$(npm test)
+        echo "$result"
+        if [[ "$result" == *"FAIL"* ]]; then
+        echo "Tests failed: There are failing tests. Please check and fix them before continuing."
+        exit 1
+         else
+          echo "Tests passed successfully"
+        fi
 
-      - name: Commit new version
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git add version.txt
-          git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
+        
+    - name: Commit new version
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git add version.txt
+        git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
 
-      - name: Create new tag
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git tag v${{ steps.increment_version.outputs.new_version }}
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
+        
+    - name: Create new tag
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git tag v${{ steps.increment_version.outputs.new_version }}
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
 
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
+    
+      
