@@ -43,13 +43,16 @@ jobs:
         echo $new_version > version.txt
 
     - name: Commit new version
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git add version.txt
         git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
-        git push origin main
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
 
     - name: Create new tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git tag v${{ steps.increment_version.outputs.new_version }}
-        git push origin v${{ steps.increment_version.outputs.new_version }}
-
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
