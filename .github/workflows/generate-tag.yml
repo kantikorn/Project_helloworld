@@ -1,21 +1,55 @@
-name: Bump version
+name: Generate Tag
+
 on:
   push:
     branches:
-      - master
+      - main
+
 jobs:
-  build:
+  create_tag:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+
+    - name: Get current version
+      id: get_version
+      run: |
+        if [ -f version.txt ]; then
+          version=$(cat version.txt)
+          echo "Current version: $version"
+        else
+          version=0.0.0
+          echo "0.0.0" > version.txt
+          echo "Current version: $version"
+        fi
+        echo "::set-output name=version::$version"
+
+    - name: Increment version
+      id: increment_version
+      run: |
+        version=${{ steps.get_version.outputs.version }}
+        IFS='.' read -r major minor patch <<< "$version"
+        patch=$((patch + 1))
+        new_version="$major.$minor.$patch"
+        echo "New version: $new_version"
+        echo "::set-output name=new_version::$new_version"
+        echo $new_version > version.txt
+
+    - name: Commit new version
+      run: |
+        git add version.txt
+        git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
+        git push origin main
+
+    - name: Create new tag
+      run: |
+        git tag v${{ steps.increment_version.outputs.new_version }}
+        git push origin v${{ steps.increment_version.outputs.new_version }}
+
