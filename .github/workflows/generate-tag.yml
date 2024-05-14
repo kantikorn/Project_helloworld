@@ -86,5 +86,14 @@ jobs:
         git tag v${{ steps.increment_version.outputs.new_version }}
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
 
-    
+        - name: Build project
+        run: npm run build  # หรือคำสั่งใดๆที่ใช้สำหรับการ build โปรเจ็กต์ของคุณ
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: gh-pages
+          
       
