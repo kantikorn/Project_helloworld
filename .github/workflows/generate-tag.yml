@@ -24,29 +24,51 @@ jobs:
     - name: Run tests
       run: npm test
 
-    - name: Check loop condition
-      if: success()
-      run: |
-        version=$(cat version.txt)
-        if [ "$version" -gt 10 ]; then
-          echo "Error: Loop condition exceeded (greater than 10). Please fix before committing."
-          exit 1
-        fi
-
     - name: Set up Git
       if: success()
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
 
-        # Commit new version and push
+    - name: Get current version
+      if: success()
+      id: get_version
+      run: |
+        if [ -f version.txt ]; then
+          version=$(cat version.txt)
+          echo "Current version: $version"
+        else
+          version=0.0.0
+          echo "0.0.0" > version.txt
+          echo "Current version: $version"
+        fi
+        echo "::set-output name=version::$version"
+
+    - name: Increment version
+      if: success()
+      id: increment_version
+      run: |
+        version=${{ steps.get_version.outputs.version }}
+        IFS='.' read -r major minor patch <<< "$version"
+        patch=$((patch + 1))
+        new_version="$major.$minor.$patch"
+        echo "New version: $new_version"
+        echo "::set-output name=new_version::$new_version"
+        echo $new_version > version.txt
+
+    - name: Commit new version
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
         git add version.txt
         git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
 
     - name: Create new tag
       if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # Tag the new version and push
         git tag v${{ steps.increment_version.outputs.new_version }}
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
