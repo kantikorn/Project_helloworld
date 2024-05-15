@@ -56,18 +56,17 @@ jobs:
         echo "::set-output name=new_version::$new_version"
         echo $new_version > version.txt
 
-    - name: Run tests
+    - name: Run tests and check results
       run: |
         result=$(npm test)
         echo "$result"
         if [[ "$result" == *"FAIL"* ]]; then
-        echo "Tests failed: There are failing tests. Please check and fix them before continuing."
-        exit 1
-         else
+          echo "Tests failed: There are failing tests. Please check and fix them before continuing."
+          exit 1
+        else
           echo "Tests passed successfully"
         fi
 
-        
     - name: Commit new version
       if: success()
       env:
@@ -77,7 +76,6 @@ jobs:
         git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
 
-        
     - name: Create new tag
       if: success()
       env:
@@ -86,6 +84,8 @@ jobs:
         git tag v${{ steps.increment_version.outputs.new_version }}
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
 
-        - name: Build project
-        run: npm run build
-
+    - name: Build project
+      run: npm run build
+      shell: /usr/bin/bash -e {0}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
