@@ -288,6 +288,12 @@ jobs:
 
 >### ✅เราจะทำการ Test commit ที่ถูกต้องขึ้นไป ที่ github ของเรา ก่อน
 
+### ทำการกำหนดหัวข้อที่ต้องการ commit ขึ้นไปที่ github Browser ในที่นี้ยกตัวอย่างเป็น Commit Loop True
+
+<p align ="center">
+  <img src="../Document/image/com-loop.PNG" alt="testweb">
+</p>
+
 #### ✅ ถ้าเทสเเล้ว ฟังก์ชั่นที่เราส่งค่าไปถูกต้อง คือ 10 ค่า เพื่อ Loop จะเเสดง การ Commit push Success
 
 <p align ="center">
@@ -323,7 +329,7 @@ jobs:
   <img src="../Document/image/test_false.PNG" alt="testweb">
 </p>
 
-### ✅📑ในกรณีที่ Automate Test ผ่านตามเงื่อไข จะทำการ Deploy ขึ้นไปที่ github page ด้วยคำสั่งนี้🚚
+>### ✅📑ในกรณีที่ Automate Test ผ่านตามเงื่อไข จะทำการ Deploy ขึ้นไปที่ github page ด้วยคำสั่งนี้🚚
 
 
 ```yml
@@ -339,7 +345,7 @@ jobs:
   <img src="../Document/image/Deployment.PNG" alt="testweb">
 </p>
 
-#### เเละสามารถ Click ลิ้งค์ deploy เพื่อเเสดงหน้าเว็บที่เรากำหนด ให้เเสดงเป็นหน้าเเรก คือ index.html
+#### ✅ เเละสามารถ Click ลิ้งค์ deploy เพื่อเเสดงหน้าเว็บที่เรากำหนด ให้เเสดงเป็นหน้าเเรก คือ index.html
 <p align ="center">
   <img src="../Document/image/web_deploy.PNG" alt="testweb">
 </p>
