@@ -85,8 +85,13 @@ jobs:
         git tag v${{ steps.increment_version.outputs.new_version }}
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
 
+    - name: Copy index.html to build directory
+      run: cp index.html build/
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          html_file: index.html
+      
