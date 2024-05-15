@@ -76,6 +76,12 @@ jobs:
         git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
 
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Copy files to build directory
+      run: cp -r * build
+
     - name: Create new tag
       if: success()
       env:
@@ -89,4 +95,3 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
-    
