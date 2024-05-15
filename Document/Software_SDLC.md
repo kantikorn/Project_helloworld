@@ -106,6 +106,195 @@ app.listen(port, () => {
 >#### 💻📑 ต่อไปเรามาจัดการ Respositories บน github กัน
 
 ### 1️⃣ สร้าง Respositories
+<p align ="center">
+  <img src="../Document/image/repo.PNG" alt="testweb">
+</p>
+
+### เสร็จเเล้วกด Create repository ได้เลยครับ ✅🟩
+
+### 2️⃣ เมื่อสร้างเสร็จ เเล้วจะเเสดง Repo แบบนี้
+##### (ในที่นี้ผมสร้างไว้ก่อนเเล้ว ถ้าสร้างใหม่จะมีเเค่ Readme มาเท่านั้นครับ)
+<p align ="center">
+  <img src="../Document/image/result_Repo.PNG" alt="testweb">
+</p>
+
+>### 📉🔽ต่อมาเราจะมา Clone Repositories จาก github ลงมาที่ Github Desktop กันครับ
+ 
+#### 1️⃣ ติดตั้ง Github Desktop ลงเครื่องของเราก่อน
+### ลิ้งค์ติดตั้ง Github Desktop https://desktop.github.com/
+<p align ="center">
+  <img src="../Document/image/download_Gighub.PNG" alt="testweb">
+</p>
+
+###  2️⃣ ล็อกอินบัญชีของ github ให้เรียบร้อย เเล้ว กด Clone Repositories จะเด้ง pop up นี้ขึ้นมา 
+<p align ="center">
+  <img src="../Document/image/Clone.PNG" alt="testweb">
+</p>
+
+#### ✅ ให้เราไป Copy URL Respositories บน github Browser โดย Click ที่ Code เเล้ว เลือกเป็น https จากนั้นทำการ Copy
+<p align ="center">
+  <img src="../Document/image/copy URL_Repo.PNG" alt="testweb">
+</p>
+
+### 3️⃣ หลังจาก Copy URL เเล้วนำไปวางที่ Github Desktop เเล้ว จะได้ folder หรือ ไฟล์ ใน Repo ลงมาที่เครื่องของเราเเล้ว เป็นอันเสร็จสิ้นเรื่องการ Connect github เเละ github Desktop📰✅
+
+### 4️⃣ สร้างไฟล์ชื่อ loop.js เพื่อกำหนด ขอบเขตการทำงานของ Function ต้นเเบบ ในการทำเทส
+
+
+```js
+function loopNumbers() {
+    let result = [];
+    for(let i =1; i <= 10; i++) {
+        result.push(i)
+    }
+    return result;
+}
+module.exports = loopNumbers;
+```
+
+
+>### 5️⃣ สร้าง Folder tests📂  เเละสร้างไฟล์ loop.test.js 📇( เพื่อส่งค่าไปในฟังก์ชั่นที่เรากำหนดก่อนหน้านี้ )
+
+```js
+const loopNumbers = require('../loop');
+
+test('loop from 1 to 10', () =>{
+    expect(loopNumbers()).toEqual([1,2,3,4,5,6,7,8,9,10]);
+})
+```
+
+>#### 🚀 ในการสร้างไฟล์ loop.js เเละ loop.test.js เป็นการสร้าง Function Loop ตัวเลข เเละสามารถส่งค่าไปได้เพียง 10 ค่า เท่านั้น ถ้ามากกว่านี้ การทำ Automate Test จะเเสดง Err !! ถ้าอยู่ในขอบเขต จะสามารถ commit push สำเร็จ
+
+---
+
+>## 📋🔓ต่อไปเข้าสู่การสร้าง WorkFlow สำหรับ CI/CD 
+
+#### สำหรับ CI/CD คือการเขียนสคริปต์หรือไฟล์ที่กำหนดขั้นตอนต่างๆ ที่จะดำเนินการเมื่อมีการเปลี่ยนแปลงโค้ดใน repository ของคุณ
+
+#### 📌สำหรับตัวอย่างนี้ เราจะเน้นไปที่การสร้างไฟล์ Workflow สำหรับ GitHub Actions เพื่อทดสอบ (Test) และนำส่งโค้ด (Deploy) โดยอัตโนมัติ
+
+### ✅งั้นมาลุยกันต่อเลยครับ🚩
+
+### 6️⃣ 📁เราจะสร้าง Folder github เเละ workflows ใน Folder github อีกที รูปเเบบประมาณนี้
+
+  * github
+    * workflow
+
+### 7️⃣ 📁ต่อไปทำการสร้างไฟล์ generate-tag.yml โครงสร้าง Folder ประมาณนี้ครับ
+* github
+    * workflow
+        * generate-tag.yml
+
+### 8️⃣ ทำการเขียนโค้ด WorkFlow เพื่อกำหนด การทำ Test CI Automate กัน
+
+```yml
+name: Generate Tag
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test_and_create_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+
+    - name: Set up Git
+      if: success()
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+
+    - name: Get current version
+      if: success()
+      id: get_version
+      run: |
+        if [ -f version.txt ]; then
+          version=$(cat version.txt)
+          echo "Current version: $version"
+        else
+          version=0.0.0
+          echo "0.0.0" > version.txt
+          echo "Current version: $version"
+        fi
+        echo "::set-output name=version::$version"
+
+    - name: Increment version
+      if: success()
+      id: increment_version
+      run: |
+        version=${{ steps.get_version.outputs.version }}
+        IFS='.' read -r major minor patch <<< "$version"
+        patch=$((patch + 1))
+        new_version="$major.$minor.$patch"
+        echo "New version: $new_version"
+        echo "::set-output name=new_version::$new_version"
+        echo $new_version > version.txt
+
+    - name: Run tests and check results
+      run: |
+        result=$(npm test)
+        echo "$result"
+        if [[ "$result" == *"FAIL"* ]]; then
+          echo "Tests failed: There are failing tests. Please check and fix them before continuing."
+          exit 1
+        else
+          echo "Tests passed successfully"
+        fi
+
+    - name: Commit new version
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git add version.txt
+        git commit -m "chore: bump version to ${{ steps.increment_version.outputs.new_version }}"
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git HEAD:main
+
+
+    - name: Create new tag
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git tag v${{ steps.increment_version.outputs.new_version }}
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
+
+    - name: Copy index.html to build directory
+      run: cp index.html build/
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          html_file: index.html
+```
+      
+
+
+
+
+
+
+
+
+
 
 
 
