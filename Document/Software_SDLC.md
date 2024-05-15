@@ -285,6 +285,66 @@ jobs:
           publish_dir: ./build
           html_file: index.html
 ```
+
+>### ✅เราจะทำการ Test commit ที่ถูกต้องขึ้นไป ที่ github ของเรา ก่อน
+
+#### ✅ ถ้าเทสเเล้ว ฟังก์ชั่นที่เราส่งค่าไปถูกต้อง คือ 10 ค่า เพื่อ Loop จะเเสดง การ Commit push Success
+
+<p align ="center">
+  <img src="../Document/image/CI_True.PNG" alt="testweb">
+</p>
+
+---
+<p align ="center">
+  <img src="../Document/image/True.PNG" alt="testweb">
+</p>
+
+### สามารถ เข้ามาดู Work Flow ที่เราเขียนกำหนดคำสั่งการทำงาน ว่า ผ่าน ทุก Case ไหม 
+
+<p align ="center">
+  <img src="../Document/image/wk_flow.PNG" alt="testweb">
+</p>
+
+---
+
+### ❗❌ในกรณีที่ส่งค่า ไม่ผ่านไปยัง function เช่นส่งค่าไป 11 ค่า เเต่ฟังก์ชั่นต้องการ 10 ค่า จะเเสดงผล ไม่ผ่านหลังจาก Commit ไปที่ github Browser
+
+<p align ="center">
+  <img src="../Document/image/commit_err.PNG" alt="testweb">
+</p>
+
+<p align ="center">
+  <img src="../Document/image/error.PNG" alt="testweb">
+</p>
+
+### ❗⛔สามารถ เข้ามาดู Work Flow Reject Error จะเเสดงข้อผิดพลาดจากการ Run Test
+
+<p align ="center">
+  <img src="../Document/image/test_false.PNG" alt="testweb">
+</p>
+
+### ✅📑ในกรณีที่ Automate Test ผ่านตามเงื่อไข จะทำการ Deploy ขึ้นไปที่ github page ด้วยคำสั่งนี้🚚
+
+
+```yml
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          html_file: index.html
+```
+
+<p align ="center">
+  <img src="../Document/image/Deployment.PNG" alt="testweb">
+</p>
+
+#### เเละสามารถ Click ลิ้งค์ deploy เพื่อเเสดงหน้าเว็บที่เรากำหนด ให้เเสดงเป็นหน้าเเรก คือ index.html
+<p align ="center">
+  <img src="../Document/image/web_deploy.PNG" alt="testweb">
+</p>
+
+
       
 
 
