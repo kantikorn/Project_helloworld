@@ -84,8 +84,4 @@ jobs:
         git tag v${{ steps.increment_version.outputs.new_version }}
         git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kantikorn/Project_helloworld.git v${{ steps.increment_version.outputs.new_version }}
 
-    - name: Build project
-      run: npm run build
-      shell: /usr/bin/bash -e {0}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
