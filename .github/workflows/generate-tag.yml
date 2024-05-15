@@ -80,7 +80,8 @@ jobs:
       run: mkdir build
 
     - name: Copy files to build directory
-      run: cp -r * build
+      run: cp -r !(build) build
+    
 
     - name: Create new tag
       if: success()
